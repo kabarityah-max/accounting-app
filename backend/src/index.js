@@ -14,9 +14,24 @@ const settingsRoutes = require('./routes/settings');
 
 const app = express();
 
-const allowedOrigins = ['http://localhost:5173'];
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://accounting-app-teal.vercel.app', // Production Vercel URL
+];
 if (process.env.FRONTEND_URL) allowedOrigins.push(process.env.FRONTEND_URL);
-app.use(cors({ origin: allowedOrigins, credentials: true }));
+
+// CORS configuration
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow if origin is in allowedOrigins or if no origin (same-origin or mobile)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
 app.use(express.json());
 app.use(cookieParser());
 
