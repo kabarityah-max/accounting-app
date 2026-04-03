@@ -1,0 +1,144 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  EMPLOYEE
+}
+
+enum AccountType {
+  ASSET
+  LIABILITY
+  EQUITY
+  REVENUE
+  EXPENSE
+}
+
+enum NormalBalance {
+  DEBIT
+  CREDIT
+}
+
+enum TransactionType {
+  PURCHASE
+  SALE
+  SERVICE_PURCHASE
+  SERVICE_SALE
+  SALARY
+}
+
+enum Currency {
+  JOD
+  USD
+}
+
+model User {
+  id                  Int           @id @default(autoincrement())
+  name                String
+  email               String        @unique
+  passwordHash        String        @map("password_hash")
+  role                Role          @default(EMPLOYEE)
+  currencyPreference  Currency      @default(JOD) @map("currency_preference")
+  createdAt           DateTime      @default(now()) @map("created_at")
+  transactions        Transaction[]
+  financialPeriods    FinancialPeriod[] @relation("CreatedByUser")
+
+  @@map("users")
+}
+
+model Account {
+  id            Int           @id @default(autoincrement())
+  code          String        @unique
+  name          String
+  type          AccountType
+  normalBalance NormalBalance @map("normal_balance")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  journalEntries JournalEntry[]
+
+  @@map("accounts")
+}
+
+model Transaction {
+  id            Int             @id @default(autoincrement())
+  date          DateTime
+  description   String
+  type          TransactionType
+  currency      Currency
+  exchangeRate  Decimal         @map("exchange_rate") @db.Decimal(10, 4)
+  createdBy     Int             @map("created_by")
+  periodId      Int?            @map("period_id")
+  createdAt     DateTime        @default(now()) @map("created_at")
+
+  user          User            @relation(fields: [createdBy], references: [id])
+  period        FinancialPeriod? @relation(fields: [periodId], references: [id])
+  journalEntries JournalEntry[]
+  salaryPayment SalaryPayment?
+
+  @@map("transactions")
+}
+
+model JournalEntry {
+  id            Int         @id @default(autoincrement())
+  transactionId Int         @map("transaction_id")
+  accountId     Int         @map("account_id")
+  debitAmount   Decimal     @default(0) @map("debit_amount") @db.Decimal(15, 2)
+  creditAmount  Decimal     @default(0) @map("credit_amount") @db.Decimal(15, 2)
+  currency      Currency
+  note          String?
+
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  account       Account     @relation(fields: [accountId], references: [id])
+
+  @@map("journal_entries")
+}
+
+model Employee {
+  id          Int             @id @default(autoincrement())
+  name        String
+  position    String
+  baseSalary  Decimal         @map("base_salary") @db.Decimal(15, 2)
+  currency    Currency        @default(JOD)
+  active      Boolean         @default(true)
+  createdAt   DateTime        @default(now()) @map("created_at")
+  salaryPayments SalaryPayment[]
+
+  @@map("employees")
+}
+
+model SalaryPayment {
+  id            Int         @id @default(autoincrement())
+  employeeId    Int         @map("employee_id")
+  periodId      Int?        @map("period_id")
+  amount        Decimal     @db.Decimal(15, 2)
+  currency      Currency
+  paymentDate   DateTime    @map("payment_date")
+  transactionId Int         @unique @map("transaction_id")
+  notes         String?
+
+  employee      Employee    @relation(fields: [employeeId], references: [id])
+  period        FinancialPeriod? @relation(fields: [periodId], references: [id])
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+
+  @@map("salary_payments")
+}
+
+model FinancialPeriod {
+  id          Int             @id @default(autoincrement())
+  name        String
+  startDate   DateTime        @map("start_date")
+  endDate     DateTime        @map("end_date")
+  isClosed    Boolean         @default(false) @map("is_closed")
+  createdBy   Int             @map("created_by")
+
+  creator     User            @relation("CreatedByUser", fields: [createdBy], references: [id])
+  transactions Transaction[]
+  salaryPayments SalaryPayment[]
+
+  @@map("financial_periods")
+}

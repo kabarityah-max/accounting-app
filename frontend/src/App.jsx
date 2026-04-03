@@ -1,0 +1,55 @@
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { CurrencyProvider } from './context/CurrencyContext';
+import Navbar from './components/Navbar';
+import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
+import Transactions from './pages/Transactions';
+import Salaries from './pages/Salaries';
+import Employees from './pages/Employees';
+import Accounts from './pages/Accounts';
+import Periods from './pages/Periods';
+import Reports from './pages/Reports';
+
+function PrivateRoute({ children, adminOnly = false }) {
+  const { user, loading, isAdmin } = useAuth();
+  if (loading) return <div className="p-8 text-center">Loading...</div>;
+  if (!user) return <Navigate to="/login" />;
+  if (adminOnly && !isAdmin) return <Navigate to="/" />;
+  return children;
+}
+
+function AppRoutes() {
+  const { user } = useAuth();
+  return (
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-slate-100">
+        <Routes>
+          <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
+          <Route path="/" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+          <Route path="/transactions" element={<PrivateRoute><Transactions /></PrivateRoute>} />
+          <Route path="/salaries" element={<PrivateRoute adminOnly><Salaries /></PrivateRoute>} />
+          <Route path="/employees" element={<PrivateRoute adminOnly><Employees /></PrivateRoute>} />
+          <Route path="/accounts" element={<PrivateRoute adminOnly><Accounts /></PrivateRoute>} />
+          <Route path="/periods" element={<PrivateRoute adminOnly><Periods /></PrivateRoute>} />
+          <Route path="/reports" element={<PrivateRoute adminOnly><Reports /></PrivateRoute>} />
+        </Routes>
+      </div>
+    </>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <CurrencyProvider>
+          <Toaster position="top-right" />
+          <AppRoutes />
+        </CurrencyProvider>
+      </AuthProvider>
+    </BrowserRouter>
+  );
+}
