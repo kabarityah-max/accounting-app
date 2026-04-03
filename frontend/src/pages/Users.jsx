@@ -60,48 +60,58 @@ export default function Users() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 p-8">
+    <div className="min-h-screen p-8" style={{ backgroundColor: '#F8FAFB' }}>
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold text-slate-800 mb-8">Users</h1>
+        <h1 className="text-4xl font-bold mb-8" style={{ color: '#163C6C' }}>Users</h1>
 
         {/* Add User Form */}
-        <div className="bg-white rounded-lg shadow-md p-8 mb-8">
-          <h2 className="text-xl font-semibold text-slate-800 mb-6">Add New User</h2>
+        <div className="bg-white rounded-lg shadow-md p-8 mb-8" style={{ borderTop: '4px solid #1A80AA' }}>
+          <h2 className="text-2xl font-semibold mb-6" style={{ color: '#163C6C' }}>Add New User</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Name</label>
+              <label className="block text-sm font-medium mb-1" style={{ color: '#163C6C' }}>Name</label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full border border-slate-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border rounded px-3 py-2 focus:outline-none transition"
+                style={{ borderColor: '#E5E7EB', focusOutline: 'none' }}
+                onFocus={(e) => (e.target.style.borderColor = '#1A80AA')}
+                onBlur={(e) => (e.target.style.borderColor = '#E5E7EB')}
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
+              <label className="block text-sm font-medium mb-1" style={{ color: '#163C6C' }}>Email</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full border border-slate-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border rounded px-3 py-2 focus:outline-none transition"
+                style={{ borderColor: '#E5E7EB' }}
+                onFocus={(e) => (e.target.style.borderColor = '#1A80AA')}
+                onBlur={(e) => (e.target.style.borderColor = '#E5E7EB')}
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Password</label>
+              <label className="block text-sm font-medium mb-1" style={{ color: '#163C6C' }}>Password</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full border border-slate-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border rounded px-3 py-2 focus:outline-none transition"
+                style={{ borderColor: '#E5E7EB' }}
+                onFocus={(e) => (e.target.style.borderColor = '#1A80AA')}
+                onBlur={(e) => (e.target.style.borderColor = '#E5E7EB')}
                 required
               />
             </div>
             <button
               type="submit"
               disabled={submitting}
-              className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 disabled:opacity-50 font-medium"
+              className="text-white px-6 py-2 rounded font-medium transition hover:opacity-90"
+              style={{ backgroundColor: '#1A80AA' }}
             >
               {submitting ? 'Adding...' : 'Add User'}
             </button>
@@ -111,36 +121,37 @@ export default function Users() {
         {/* Users Table */}
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
           <div className="p-8">
-            <h2 className="text-xl font-semibold text-slate-800 mb-6">Users List</h2>
+            <h2 className="text-2xl font-semibold mb-6" style={{ color: '#163C6C' }}>Users List</h2>
             {loading ? (
-              <p className="text-slate-500">Loading...</p>
+              <p style={{ color: '#6B7280' }}>Loading...</p>
             ) : users.length === 0 ? (
-              <p className="text-slate-500">No users yet</p>
+              <p style={{ color: '#6B7280' }}>No users yet</p>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-slate-50 border-b border-slate-200">
+                  <thead style={{ backgroundColor: '#F8FAFB', borderBottomColor: '#E5E7EB' }} className="border-b">
                     <tr>
-                      <th className="px-6 py-3 text-left text-sm font-semibold text-slate-700">Name</th>
-                      <th className="px-6 py-3 text-left text-sm font-semibold text-slate-700">Email</th>
-                      <th className="px-6 py-3 text-left text-sm font-semibold text-slate-700">Role</th>
-                      <th className="px-6 py-3 text-left text-sm font-semibold text-slate-700">Actions</th>
+                      <th className="px-6 py-3 text-left text-sm font-semibold" style={{ color: '#163C6C' }}>Name</th>
+                      <th className="px-6 py-3 text-left text-sm font-semibold" style={{ color: '#163C6C' }}>Email</th>
+                      <th className="px-6 py-3 text-left text-sm font-semibold" style={{ color: '#163C6C' }}>Role</th>
+                      <th className="px-6 py-3 text-left text-sm font-semibold" style={{ color: '#163C6C' }}>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {users.map((user) => (
-                      <tr key={user.id} className="border-b border-slate-200 hover:bg-slate-50">
-                        <td className="px-6 py-4 text-sm text-slate-900">{user.name}</td>
-                        <td className="px-6 py-4 text-sm text-slate-900">{user.email}</td>
+                      <tr key={user.id} className="border-b hover:bg-blue-50 transition" style={{ borderBottomColor: '#E5E7EB' }}>
+                        <td className="px-6 py-4 text-sm" style={{ color: '#1F2937' }}>{user.name}</td>
+                        <td className="px-6 py-4 text-sm" style={{ color: '#1F2937' }}>{user.email}</td>
                         <td className="px-6 py-4 text-sm">
-                          <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
+                          <span className="px-3 py-1 rounded-full text-xs font-semibold text-white" style={{ backgroundColor: '#1A80AA' }}>
                             {user.role}
                           </span>
                         </td>
                         <td className="px-6 py-4 text-sm">
                           <button
                             onClick={() => handleDelete(user.id)}
-                            className="text-red-600 hover:text-red-800 font-medium"
+                            className="font-medium transition hover:opacity-70"
+                            style={{ color: '#EF4444' }}
                           >
                             Delete
                           </button>
