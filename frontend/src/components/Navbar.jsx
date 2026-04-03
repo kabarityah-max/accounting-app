@@ -24,6 +24,7 @@ export default function Navbar() {
             <Link to="/transactions" className="hover:text-emerald-300 px-2 py-1 text-sm">Transactions</Link>
             {isAdmin && (
               <>
+                <Link to="/users" className="hover:text-emerald-300 px-2 py-1 text-sm">Users</Link>
                 <Link to="/salaries" className="hover:text-emerald-300 px-2 py-1 text-sm">Salaries</Link>
                 <Link to="/employees" className="hover:text-emerald-300 px-2 py-1 text-sm">Employees</Link>
                 <Link to="/accounts" className="hover:text-emerald-300 px-2 py-1 text-sm">Accounts</Link>

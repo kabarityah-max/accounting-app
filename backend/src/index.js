@@ -11,12 +11,14 @@ const employeeRoutes = require('./routes/employees');
 const periodRoutes = require('./routes/periods');
 const reportRoutes = require('./routes/reports');
 const settingsRoutes = require('./routes/settings');
+const userRoutes = require('./routes/users');
 
 const app = express();
 
 const allowedOrigins = [
   'http://localhost:5173',
-  'https://accounting-app-teal.vercel.app', // Production Vercel URL
+  'https://accounting-app-teal.vercel.app',
+  'https://frontend-cyan-pi-55.vercel.app', // New production Vercel URL
 ];
 if (process.env.FRONTEND_URL) allowedOrigins.push(process.env.FRONTEND_URL);
 
@@ -43,6 +45,7 @@ app.use('/api/employees', employeeRoutes);
 app.use('/api/periods', periodRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/users', userRoutes);
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 
