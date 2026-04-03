@@ -33,6 +33,17 @@ export default function Employees() {
     }
   };
 
+  const handleDelete = async (emp) => {
+    if (!confirm(`Delete ${emp.name}? This action cannot be undone.`)) return;
+    try {
+      await api.delete(`/employees/${emp.id}`);
+      toast.success('Employee deleted');
+      load();
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Error deleting employee');
+    }
+  };
+
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
@@ -93,9 +104,12 @@ export default function Employees() {
                     {e.active ? 'Active' : 'Inactive'}
                   </span>
                 </td>
-                <td className="p-3">
+                <td className="p-3 space-x-3">
                   <button onClick={() => toggleActive(e)} className="text-sm text-blue-600 hover:underline">
                     {e.active ? 'Deactivate' : 'Activate'}
+                  </button>
+                  <button onClick={() => handleDelete(e)} className="text-sm text-red-600 hover:underline">
+                    Delete
                   </button>
                 </td>
               </tr>
