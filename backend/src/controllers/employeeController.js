@@ -52,4 +52,18 @@ async function updateEmployee(req, res) {
   }
 }
 
-module.exports = { getEmployees, createEmployee, updateEmployee };
+async function deleteEmployee(req, res) {
+  try {
+    const { id } = req.params;
+    await prisma.employee.delete({
+      where: { id: parseInt(id) },
+    });
+    res.json({ message: 'Employee deleted successfully' });
+  } catch (err) {
+    if (err.code === 'P2025') return res.status(404).json({ error: 'Employee not found' });
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+}
+
+module.exports = { getEmployees, createEmployee, updateEmployee, deleteEmployee };
