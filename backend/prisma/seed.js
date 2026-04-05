@@ -4,19 +4,42 @@ const bcrypt = require('bcryptjs');
 const prisma = new PrismaClient();
 
 async function main() {
-  // Create admin user
+  // Create default organization
+  const org = await prisma.organization.upsert({
+    where: { slug: 'default' },
+    update: {},
+    create: {
+      name: 'Default Company',
+      slug: 'default',
+    },
+  });
+
+  // Create admin user with organization
   const passwordHash = await bcrypt.hash('admin123', 10);
   await prisma.user.upsert({
     where: { email: 'admin@company.com' },
-    update: {},
+    update: { organizationId: org.id },
     create: {
       name: 'Admin User',
       email: 'admin@company.com',
       passwordHash,
       role: 'ADMIN',
       currencyPreference: 'JOD',
+      organizationId: org.id,
     },
   });
+
+  // Assign any existing users to default organization
+  const usersWithoutOrg = await prisma.user.findMany({
+    where: { organizationId: null },
+  });
+
+  for (const user of usersWithoutOrg) {
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { organizationId: org.id },
+    });
+  }
 
   // Default Chart of Accounts
   const accounts = [

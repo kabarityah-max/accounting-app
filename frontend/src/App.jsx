@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { CurrencyProvider } from './context/CurrencyContext';
 import Navbar from './components/Navbar';
 import Login from './pages/Login';
+import AcceptInvite from './pages/AcceptInvite';
 import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
 import Salaries from './pages/Salaries';
@@ -23,12 +24,18 @@ function PrivateRoute({ children, adminOnly = false }) {
 
 function AppRoutes() {
   const { user } = useAuth();
+
+  // Public routes that don't need Navbar
+  const publicRoutes = ['/login', '/accept-invite'];
+  const isPublicRoute = publicRoutes.includes(window.location.pathname);
+
   return (
     <>
-      <Navbar />
-      <div className="min-h-screen bg-slate-100">
+      {!isPublicRoute && <Navbar />}
+      <div className={isPublicRoute ? '' : 'min-h-screen bg-slate-100'}>
         <Routes>
           <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
+          <Route path="/accept-invite" element={<AcceptInvite />} />
           <Route path="/" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
           <Route path="/transactions" element={<PrivateRoute><Transactions /></PrivateRoute>} />
           <Route path="/salaries" element={<PrivateRoute adminOnly><Salaries /></PrivateRoute>} />

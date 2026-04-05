@@ -38,17 +38,69 @@ enum Currency {
   USD
 }
 
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+}
+
+model Organization {
+  id        Int      @id @default(autoincrement())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+
+  users     User[]
+  invitations UserInvitation[]
+
+  @@map("organizations")
+}
+
+model UserInvitation {
+  id              String   @id @default(cuid())
+  organizationId  Int      @map("organization_id")
+  email           String
+  role            Role
+  token           String   @unique
+  expiresAt       DateTime @map("expires_at")
+  status          InvitationStatus @default(PENDING)
+  createdBy       Int      @map("created_by")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  admin           User     @relation("CreatedInvitations", fields: [createdBy], references: [id], onDelete: Cascade)
+
+  @@unique([email, organizationId])
+  @@index([token])
+  @@map("user_invitations")
+}
+
 model User {
   id                  Int           @id @default(autoincrement())
   name                String
   email               String        @unique
   passwordHash        String        @map("password_hash")
   role                Role          @default(EMPLOYEE)
+  status              UserStatus    @default(ACTIVE)
   currencyPreference  Currency      @default(JOD) @map("currency_preference")
+  organizationId      Int?          @map("organization_id")
+  invitedBy           Int?          @map("invited_by")
+  invitedAt           DateTime?     @map("invited_at")
+  emailSent           Boolean       @default(false) @map("email_sent")
+  emailSentAt         DateTime?     @map("email_sent_at")
   createdAt           DateTime      @default(now()) @map("created_at")
+
+  organization        Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   transactions        Transaction[]
   financialPeriods    FinancialPeriod[] @relation("CreatedByUser")
+  sentInvitations     UserInvitation[] @relation("CreatedInvitations")
 
+  @@index([organizationId])
   @@map("users")
 }
 
@@ -121,7 +173,7 @@ model SalaryPayment {
   transactionId Int         @unique @map("transaction_id")
   notes         String?
 
-  employee      Employee    @relation(fields: [employeeId], references: [id])
+  employee      Employee    @relation(fields: [employeeId], references: [id], onDelete: Cascade)
   period        FinancialPeriod? @relation(fields: [periodId], references: [id])
   transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
 

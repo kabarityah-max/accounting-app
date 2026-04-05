@@ -16,13 +16,25 @@ async function login(req, res) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
+    // Check if user is suspended
+    if (user.status === 'SUSPENDED') {
+      return res.status(403).json({ error: 'Your account has been suspended' });
+    }
+
     const valid = await bcrypt.compare(password, user.passwordHash);
     if (!valid) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role, name: user.name },
+      {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        name: user.name,
+        organizationId: user.organizationId,
+        status: user.status,
+      },
       process.env.JWT_SECRET,
       { expiresIn: '8h' }
     );
@@ -35,7 +47,15 @@ async function login(req, res) {
     });
 
     res.json({
-      user: { id: user.id, name: user.name, email: user.email, role: user.role, currencyPreference: user.currencyPreference },
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        status: user.status,
+        currencyPreference: user.currencyPreference,
+        organizationId: user.organizationId,
+      },
       token,
     });
   } catch (err) {
@@ -48,7 +68,15 @@ async function me(req, res) {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.user.id },
-      select: { id: true, name: true, email: true, role: true, currencyPreference: true },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        status: true,
+        currencyPreference: true,
+        organizationId: true,
+      },
     });
     if (!user) return res.status(404).json({ error: 'User not found' });
     res.json({ user });

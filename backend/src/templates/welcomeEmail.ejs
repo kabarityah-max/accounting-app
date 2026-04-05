@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to <%= companyName %></title>
+  <style>
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .email-wrapper {
+      background-color: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    .header {
+      background: linear-gradient(135deg, #163C6C 0%, #1A80AA 100%);
+      color: white;
+      padding: 40px 20px;
+      text-align: center;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+    }
+    .content {
+      padding: 40px 30px;
+    }
+    .greeting {
+      font-size: 16px;
+      line-height: 1.6;
+      color: #333;
+      margin-bottom: 24px;
+    }
+    .greeting p {
+      margin: 0 0 12px 0;
+    }
+    .credentials-box {
+      background-color: #f9f9f9;
+      border-left: 4px solid #1A80AA;
+      padding: 20px;
+      margin: 30px 0;
+      border-radius: 4px;
+    }
+    .credentials-box h3 {
+      margin: 0 0 16px 0;
+      color: #163C6C;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .credential-item {
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+    .credential-label {
+      font-weight: 600;
+      color: #163C6C;
+      display: inline-block;
+      min-width: 120px;
+    }
+    .credential-value {
+      color: #333;
+      font-family: 'Courier New', monospace;
+      word-break: break-all;
+    }
+    .login-note {
+      font-size: 13px;
+      color: #666;
+      font-style: italic;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid #e0e0e0;
+    }
+    .button-container {
+      text-align: center;
+      margin: 32px 0;
+    }
+    .button {
+      background-color: #1A80AA;
+      color: white;
+      padding: 12px 32px;
+      text-decoration: none;
+      display: inline-block;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 14px;
+      transition: background-color 0.3s ease;
+    }
+    .button:hover {
+      background-color: #163C6C;
+    }
+    .support-section {
+      background-color: #f0f7ff;
+      padding: 20px;
+      border-radius: 4px;
+      margin: 24px 0;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #555;
+    }
+    .support-section p {
+      margin: 8px 0;
+    }
+    .footer {
+      background-color: #f9f9f9;
+      padding: 20px 30px;
+      text-align: center;
+      border-top: 1px solid #e0e0e0;
+      font-size: 12px;
+      color: #888;
+    }
+    .footer p {
+      margin: 4px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="email-wrapper">
+      <!-- Header -->
+      <div class="header">
+        <h1>Welcome to <%= companyName %></h1>
+      </div>
+
+      <!-- Main Content -->
+      <div class="content">
+        <div class="greeting">
+          <p>Hi <%= userName %>,</p>
+          <p>Your account has been successfully created on the accounting system. You can now access all the tools and features you need to manage your financial tasks efficiently.</p>
+        </div>
+
+        <!-- Credentials -->
+        <div class="credentials-box">
+          <h3>🔐 Your Login Information</h3>
+          <div class="credential-item">
+            <span class="credential-label">Email:</span>
+            <span class="credential-value"><%= userEmail %></span>
+          </div>
+          <div class="credential-item">
+            <span class="credential-label">Password:</span>
+            <span class="credential-value"><%= temporaryPassword %></span>
+          </div>
+          <p class="login-note">⚠️ We strongly recommend changing your password after your first login for security purposes.</p>
+        </div>
+
+        <!-- Login Button -->
+        <div class="button-container">
+          <a href="<%= loginUrl %>" class="button">Sign In to Your Account</a>
+        </div>
+
+        <!-- Getting Started Info -->
+        <div class="support-section">
+          <p><strong>📌 Getting Started:</strong></p>
+          <p>1. Use your email and temporary password to log in</p>
+          <p>2. Navigate to your account settings to change your password</p>
+          <p>3. Explore the dashboard to familiarize yourself with the system</p>
+          <p>4. Contact your administrator if you need any assistance</p>
+        </div>
+
+        <p>If you have any questions or experience any issues accessing your account, please don't hesitate to reach out to your system administrator for support.</p>
+
+        <p>Best regards,<br><strong><%= companyName %> Team</strong></p>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <p>&copy; <%= new Date().getFullYear() %> <%= companyName %>. All rights reserved.</p>
+        <p>This is an automated message. Please do not reply to this email.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

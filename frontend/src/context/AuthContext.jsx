@@ -19,8 +19,20 @@ export function AuthProvider({ children }) {
 
     api.get('/auth/me')
       .then((res) => {
-        setUser(res.data.user);
-        localStorage.setItem('user', JSON.stringify(res.data.user));
+        const userData = res.data.user;
+
+        // Check if user is suspended
+        if (userData.status === 'SUSPENDED') {
+          setUser(null);
+          localStorage.removeItem('user');
+          localStorage.removeItem('token');
+          delete api.defaults.headers.common['Authorization'];
+          alert('Your account has been suspended. Please contact an administrator.');
+          return;
+        }
+
+        setUser(userData);
+        localStorage.setItem('user', JSON.stringify(userData));
       })
       .catch(() => {
         setUser(null);
@@ -33,6 +45,11 @@ export function AuthProvider({ children }) {
   const login = async (email, password) => {
     const res = await api.post('/auth/login', { email, password });
     const { user, token } = res.data;
+
+    // Check if user is suspended
+    if (user.status === 'SUSPENDED') {
+      throw new Error('Your account has been suspended. Please contact an administrator.');
+    }
 
     // Store token and set it in axios headers
     localStorage.setItem('token', token);
@@ -54,7 +71,16 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading, isAdmin: user?.role === 'ADMIN' }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        logout,
+        loading,
+        isAdmin: user?.role === 'ADMIN',
+        isSuspended: user?.status === 'SUSPENDED',
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
